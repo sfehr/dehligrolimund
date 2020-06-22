@@ -10,6 +10,7 @@
 * * Display Studio Info
 * * Display Index
 * * Close Index
+* * Privacy Policy
 * CREATE SLUGS
 *
 */
@@ -18,50 +19,84 @@
 jQuery( document ).ready( function( $ ) {
 
 	// VARIABLES
-	var projects = [];	
+	var projects = {};
+	var project_titles = [];	
+
+	
+	// CONTENT OBJECT CONSTRUCTOR
+	function Project( title, anchor, content, color ) {
+		
+		this.title = title;
+		this.anchor = anchor;
+		this.content = content;
+		this.color = color;
+		
+	}	
+	
 		
 	// INDEXING PROJECTS
-	$( document ).find( '.section' ).each( function( index ){
+	$( document ).find( '#fullpage .section' ).each( function( index ){
 
 		// Get the content
-		var title = $( this ).find( '.entry-title' ).text();
+		var title = $( this ).find( '.entry-title' ).html();
 		var anchor = string_to_slug( title );
+		var content = $( this ).find( '.entry-content' ).html();
+		var color = $( this ).find( '.has-background' ).attr( 'class' );
 
 		// Create Array
-		projects[ index ] = anchor;
+		project_titles[ index ] = anchor;
+		
+		// set data-slug attribute to all sections in #fullpage
+		$( this ).attr( 'data-slug', anchor );
+		
+		// set data-slug attribute to all sections in #index
+		$( 'body' ).find( '#index .section' ).eq( index ).attr( 'data-slug', anchor );
+		
+		// Creating objects based on the content
+		projects[ index ] = new Project( title, anchor, content, color );
+		
 	});
-
+	
 	initialize_fullpage();	
 
 
 	// FULLPAGE.js INITIALIZE
 	function initialize_fullpage(){
 
-		// prepare markup
-		$( document ).find( '#index .section' ).each( function( index ){
-
-			// set data-slug attribute to all sections
-			$( this ).attr( 'data-slug', projects[ index ] );
-
-		});   
-
 		// initialize fullpage.js
 		var myFullpage = new fullpage( '#fullpage', {
-			anchors: projects,
+			licenseKey: '46DF6547-26D84335-893C5DFF-8E33EBD5',
+			responsiveSlidesKey: 'ZGVobGlncm9saW11bmQuY29tXzlXdGNtVnpjRzl1YzJsMlpWTnNhV1JsY3c9PVVZag==',
+			anchors: project_titles,
 			normalScrollElements: '.ui-project-content, .ui-studio-content, #index',
 			controlArrows: false,
-			dragAndMove: true,
+			touchSensitivity: 75,
+			responsiveWidth: 650,
+			responsiveSlides: true,
+			scrollBar: false,
+/*			afterResponsive: function( isResponsive ){
+
+			},			
+*/
 
 			// Section
 			afterLoad: function( origin, destination, direction ){
 
-				// get content (item, container, selector)
+				// get the index of the current active section
+				var section_index = $( 'body' ).find( '.fp-section.active' ).index( 'article' );
+				// doublecheck for '.section' class because in responsiveslides state slides are converted to sections as well
+				if( -1 === section_index ){
+				   section_index = $( 'body' ).find( '.fp-section.active' ).prevAll( 'article:first' ).index( 'article' )
+				}
+
 				// title
-				getContent( destination.item, '.ui-project-title', '.entry-title' ); 
+				getContent( projects[ section_index ].title, '.ui-project-title' ); // get content (item, container)
 				// content
-				getContent( destination.item, '.ui-project-content .container-content', '.entry-content' );
-				// get color ( item, container, selector) no dot-notation
-				getColor( destination.item, 'ui-project-content', 'has-background' );
+				getContent( projects[ section_index ].content, '.ui-project-content .container-content' );
+					
+				// get color
+				getColor( projects[ section_index ].color, 'ui-project-content' ); //  ( color, container_class ) no dot notation
+				
 				// get UI options ( item, container, selector)
 				getUiOptions( destination.item, 'body', '.slide.active' );
 
@@ -80,48 +115,13 @@ jQuery( document ).ready( function( $ ) {
 				else{
 					$( '.itm-down' ).removeClass( 'hide' );
 				}
-
-				/*
-				// hide left button
-				$( '.itm-left' ).addClass( 'hide' );
-
-				// if the section contains more than 1 slide show the right button
-				if( $( '.fp-section.active' ).find( '.slide' ).length > 1 ){
-					$( '.itm-right' ).removeClass( 'hide' );
-				}
-				else{
-					$( '.itm-right' ).addClass( 'hide' );
-
-				}
-				*/
-
 			},
 
 			// Slide
 			afterSlideLoad: function( section, origin, destination, direction ){
 				
 				// get UI options ( item, container, selector)
-				getUiOptions( destination.item, 'body', undefined );
-				
-	/*			var current_slide = destination.index;
-
-				
-				// left button
-				if( destination.isFirst ){
-					$( '.itm-left' ).addClass( 'hide' );
-				}
-				else{
-					$( '.itm-left' ).removeClass( 'hide' );
-				}
-
-				// right button
-				if( destination.isLast ){
-					$( '.itm-right' ).addClass( 'hide' );
-				}
-				else{
-					$( '.itm-right' ).removeClass( 'hide' );
-				}
-	*/			
+				getUiOptions( destination.item, 'body', undefined );		
 
 			},
 		});
@@ -131,24 +131,23 @@ jQuery( document ).ready( function( $ ) {
 
 
 	// GET CONTENT
-	function getContent( item, container, selector ){
-
-		var container = $( container );
-		var value = $( item ).find( selector ).html();
-		container.html( value );
+	function getContent( item, container ){
+				
+		container = $( container );
+		container.html( item );
 
 	}
 
 	
 	// GET COLOR
-	function getColor( item, container, selector ){
+	function getColor( color, container_class ){
 
-		// get colo class
-		var color =  $( item ).find( '.' + selector ).attr( 'class' );
-		// reset class
-		$( 'body' ).find( '.' + container ).attr( 'class', container );
+		// select container
+		var container = $( '.' + container_class );
+		// reset color class
+		container.attr( 'class', container_class );
 		// add color class
-		$( 'body' ).find( '.' + container ).addClass( color );
+		container.addClass( color );
 
 	}
 	
@@ -209,6 +208,7 @@ jQuery( document ).ready( function( $ ) {
 
 		e.preventDefault();
 		$( 'body' ).toggleClass( 'project-info-expanded' );
+		$( 'html, body' ).toggleClass( 'noscroll' ); // prevent background from scrolling
 
 	});
 
@@ -217,6 +217,7 @@ jQuery( document ).ready( function( $ ) {
 
 		e.preventDefault();
 		$( 'body' ).toggleClass( 'studio-info-expanded' );
+		$( 'html, body' ).toggleClass( 'noscroll' ); // prevent background from scrolling
 
 	});
 
@@ -225,10 +226,9 @@ jQuery( document ).ready( function( $ ) {
 
 		// add index-active class to main container
 		$( 'body' ).addClass( 'index-active' );
+		
 		// freeze scrolling for #fullpage
-		$( 'html, body' ).css( 'overflow', 'scroll' );
-		$( 'html, body' ).css( 'height', 'auto' );	
-	//	fullpage_api.setAllowScrolling( false );
+		fullpage_api.setAllowScrolling( false );
 
 	});
 
@@ -239,10 +239,7 @@ jQuery( document ).ready( function( $ ) {
 		$( 'body' ).removeClass( 'index-active' );
 
 		// resume scrolling
-		$( 'html, body' ).css( 'overflow', 'hidden' );
-		$( 'html, body' ).css( 'height', '100%' );	
-	//	fullpage_api.setAllowScrolling( true );	
-
+		fullpage_api.setAllowScrolling( true );
 
 		if( $( this ).hasClass( 'ui-slide-link' ) ){
 
@@ -250,15 +247,34 @@ jQuery( document ).ready( function( $ ) {
 			var new_section = $( this ).parents( '.section' ).attr( 'data-slug' );
 			// get the slide position
 			var new_slide = $( this ).parents( '.slide' ).index() - 1;
-
-			// move to position
-			fullpage_api.silentMoveTo( new_section, new_slide );
+			
+			// check if responsive mode is active
+			if( $( 'body' ).hasClass( 'fp-responsive' ) ){
+				
+				// when responsiveslides state is on slide index 0 and 1 is not valid
+				new_slide++;
+				new_slide = ( new_slide > 1 ) ? new_slide : '' ;
+				
+				// move to position (in respoinsiveslides active state there is no / between section and slide in the url )
+				fullpage_api.silentMoveTo( new_section + new_slide );
+			}
+			else{
+				
+				// move to position
+				fullpage_api.silentMoveTo( new_section, new_slide );
+			}
 
 		}
 
 	});
 
-
+	// PRIVACY POLICY
+	$( document ).on( 'click', '.privacy-policy-link', function( e ){
+		
+		e.preventDefault();
+		$( '.privacy-policy-content' ).toggle();
+		
+	});
 
 	// CREATE SLUGS
 	function string_to_slug ( str ) {
@@ -279,6 +295,6 @@ jQuery( document ).ready( function( $ ) {
 
 		return str;
 	}
-	
-	
+
+
 });	

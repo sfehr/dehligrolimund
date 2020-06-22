@@ -18,7 +18,7 @@
  * Custom Image Sizes
  * Get Custom Field Values: Media Group
  * Get Custom Field Values: Keywords
- *
+ * Modify vimeo embed url
  * 
  */
 
@@ -150,9 +150,15 @@ function dehli_grolimund_scripts() {
 		wp_enqueue_script( 'comment-reply' );
 	}
 	
-	wp_enqueue_script( 'fullpage-js', 'https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.0.8/fullpage.min.js', array(), '', true );
+	wp_enqueue_script( 'fullpage-js-extension',  get_template_directory_uri() . '/js/fullpage.responsiveSlides.min.js', array(), '', true );
+	
+	wp_enqueue_script( 'fullpage-js',  get_template_directory_uri() . '/js/fullpage.extensions.min.js', array(), '', true );
+	
+	wp_enqueue_script( 'vimeo-scripts-api', 'https://player.vimeo.com/api/player.js', array(), '', true );
 	
 	wp_enqueue_script( 'dg-scripts-js', get_template_directory_uri() . '/js/dg-scripts.js', array( 'jquery' ), '', true );
+	
+	wp_enqueue_script( 'dg-img-markup-js', get_template_directory_uri() . '/js/dg-img-markup.js', array(), '', true );
 	
 }
 add_action( 'wp_enqueue_scripts', 'dehli_grolimund_scripts' );
@@ -243,8 +249,28 @@ add_filter( 'template_include', 'dg_choose_template', 99 );
  */
 function dg_custom_header() {
 	
+	//meta tag view port
+	echo '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />';
+	
+	// GMT
+	echo "
+		<!-- Google Tag Manager -->
+		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+		j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+		'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','GTM-M794Z5N');</script>
+		<!-- End Google Tag Manager -->
+	";
+	
 	// for EN typeface
 	echo '<link rel="stylesheet" href="https://use.typekit.net/wlv6frg.css">';
+	
+	// favicon
+	echo '
+		<link rel="icon" media="(prefers-color-scheme:light)" href="' . get_template_directory_uri() .  '/img/favicon-dark.png" type="image/png" />
+		<link rel="icon" media="(prefers-color-scheme:dark)" href="' . get_template_directory_uri() . '/img/favicon-light.png" type="image/png" />
+		';
 	
 }
 
@@ -262,14 +288,9 @@ function dg_gutenberg_custom_colors() {
 	// add custom color palette
 	add_theme_support( 'editor-color-palette', array(
 		array(
-			'name'  => __( 'Rosengarten', 'dehli-grolimund' ),
-			'slug'  => 'gray',
-			'color'	=> '#cbc9c9',
-		),
-		array(
-			'name'  => __( 'Rosengarten Light', 'dehli-grolimund' ),
-			'slug'  => 'light-gray',
-			'color'	=> '#dddcdc',
+			'name'  => __( 'Dunkelblau', 'dehli-grolimund' ),
+			'slug'  => 'navy',
+			'color'	=> '#748f98',
 		),	
 		array(
 			'name'  => __( 'Coral', 'dehli-grolimund' ),
@@ -286,6 +307,16 @@ function dg_gutenberg_custom_colors() {
 			'slug'  => 'beige',
 			'color'	=> '#f2d9b0',
 		),
+		array(
+			'name'  => __( 'Yellow', 'dehli-grolimund' ),
+			'slug'  => 'yellow',
+			'color'	=> '#ffe19d',
+		),
+		array(
+			'name'  => __( 'Kaki', 'dehli-grolimund' ),
+			'slug'  => 'kaki',
+			'color'	=> '#aaa491',
+		),		
 
 
 	) );	
@@ -300,7 +331,10 @@ function dg_add_custom_img_sizes() {
 	
 	add_image_size( 'dg-large', 1250, 1250 );
 	add_image_size( 'dg-extra-large', 1700, 1700 );
+	add_image_size( 'dg-super-large', 2500, 2500 );
 	
+	update_option( 'medium_large_size_w', 1000 );
+	update_option( 'medium_large_size_h', 1000 );
 }
 add_action( 'after_setup_theme', 'dg_add_custom_img_sizes' );
 
@@ -309,7 +343,6 @@ add_action( 'after_setup_theme', 'dg_add_custom_img_sizes' );
  * Get Custom Field Values: Media Group
  */
 function dg_get_media_group_entries( $wrapper_class, $class, $theme_img_size = '' ) {
-	
 	
 	// GET FIELD
 	
@@ -338,19 +371,25 @@ function dg_get_media_group_entries( $wrapper_class, $class, $theme_img_size = '
 				switch( $img_size_class ){
 
 						case 's' :
-							$img_size = 'medium';
+							// medium 500
+							// large 1024 
+							$img_size = ( $media_type == 'img' ) ? 'large' : 'medium'; // bigger img size for (landscape) images
 							break;
 
 						case 'm' :
-							$img_size = 'large';
+							// dg-large 1250
+							// dg-extra-large 1700
+							$img_size = ( $media_type == 'img' ) ? 'dg-extra-large' : 'dg-large' ; // bigger img size for (landscape) images
 							break;
 
 						case 'l' :
-							$img_size = 'dg-large';
+							// dg-super-large 2500
+							$img_size = ( $media_type == 'img' ) ? 'dg-super-large' : 'dg-extra-large' ; // bigger img size for (landscape) images
 							break;
 
 						case 'full' :
-							$img_size = 'dg-extra-large';
+							// dg-super-large 2500
+							$img_size = 'dg-super-large';
 							break;					
 				}
 			}
@@ -386,7 +425,10 @@ function dg_get_media_group_entries( $wrapper_class, $class, $theme_img_size = '
 		
 		// MOVIE (oembed)
 		if ( isset( $entry[ 'movie' ] ) && !empty( $entry[ 'movie' ] ) && $media_type === 'mov' ) {
-			$media[] = wp_oembed_get( esc_url( $entry[ 'movie' ] ) );
+			$media[] = wp_oembed_get( esc_url( $entry[ 'movie' ] ) ); // video embeding over oembed
+//			$media[] = do_shortcode( $entry[ 'movie' ] ); // video embeding over shortcode
+//			$dg_params[ 'video_url' ] = esc_url( $entry[ 'movie' ] ); // collect video url
+			
 		}
 		
 
@@ -394,12 +436,15 @@ function dg_get_media_group_entries( $wrapper_class, $class, $theme_img_size = '
 		
 		// final check if a value exists
 		if ( !empty( $media ) ){
+			
 			print '<div class="' . $wrapper_class . '" ' . $ui_options . '>';
-				print '<div class="' . $class . ' itm-' . $media_type . ' itm-' . $img_size_class . '">' .  implode( '', $media ) . '</div><!-- .' . $class . ' -->';
+				print '<div class="' . $class . ' itm-' . $media_type . ' itm-' . $img_size_class . '">' . implode( '', $media ) . '</div><!-- .' . $class . ' -->';
 				print '<button class="ui-slide-link"></button>';
 			print '</div><!-- .' . $wrapper_class . ' -->';
 		}
-	}	
+	}
+	
+//	wp_localize_script( 'dg-scripts-js', 'dg_params', $dg_params ); // pass video url to javascript
 }
 
 add_filter( 'dg_custom_fields', 'dg_get_media_group_entries' );
@@ -409,15 +454,37 @@ add_filter( 'dg_custom_fields', 'dg_get_media_group_entries' );
 /** SF:
  * Get Custom Field Values: Keywords
  */
-function dg_get_keywords() {
+function dg_get_keywords( $field ) {
 	
 	$prefix = 'dg_keyword_';
 	
 	// GET FIELD
-	$keywords = get_post_meta( get_the_ID(), $prefix . 'keywords_text', true );
+	$keywords = get_post_meta( get_the_ID(), $prefix . $field, true );
 	
 	print $keywords;
 	
 }
 
 add_filter( 'dg_custom_fields', 'dg_get_keywords' );
+
+
+
+/** SF:
+ * Modify vimeo embed url
+ */
+function modify_vimeo_embed_url( $html ) {
+	
+	// GET HTML
+	preg_match('/src\s*=\s*"(.+?)"/', $html, $src);
+	
+	// OPTIONS
+	$params .= '&autoplay=1';
+	$params .= '&background=1';
+	$params .= '&api=1';
+	
+	// RETURN HTML
+	$html = '<iframe src="' . $src[1] . $params . '" frameborder="0" allow="loop autoplay fullscreen" allowfullscreen></iframe>';
+	
+	return $html;
+}
+add_filter( 'oembed_result', 'modify_vimeo_embed_url' );

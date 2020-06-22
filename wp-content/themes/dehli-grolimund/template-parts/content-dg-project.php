@@ -32,7 +32,7 @@
 	<?php
 			
 	// SLIDES
-	dg_get_media_group_entries( 'slide', 'entry-media' ); 
+	dg_get_media_group_entries( 'slide', 'entry-media' ); // $wrapper_class, $class, $theme_img_size
 	
 		
 	?>		

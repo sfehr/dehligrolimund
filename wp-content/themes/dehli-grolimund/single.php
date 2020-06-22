@@ -34,8 +34,11 @@ get_header( 'dg' );
 					<?php
 					
 					// STUDIO CONTENT
+					$page = get_page_by_title( 'Info Dehli Grolimund' );	
+					echo $page->post_content;
 					
-					$page = get_page_by_title( 'Studio Dehli Grolimund' );	
+					// PRIVACY POLICY
+					$page = get_page_by_title( 'Privacy Policy' );	
 					echo $page->post_content;
 					
 					?>

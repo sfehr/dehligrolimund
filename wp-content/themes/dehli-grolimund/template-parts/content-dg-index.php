@@ -18,9 +18,9 @@
 		// keyword
 		the_title( '<p class="entry-title">', '</p>' );	?>
 		
-		<div class="entry-date"><?php the_date( 'yy' ); ?></div>
+		<div class="entry-date"><?php dg_get_keywords( 'date' ); ?></div>
 		
-		<div class="entry-keyword"><?php dg_get_keywords(); ?></div>
+		<div class="entry-keyword"><?php dg_get_keywords( 'keywords_text' ); ?></div>
 		
 	</div><!-- .entry-info -->
 	

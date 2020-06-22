@@ -39,6 +39,13 @@ function dg_register_keyword_box() {
 		'name'       => __( 'Project Keywords', 'dehli-grolimund' ),
 		'id'         => $prefix . 'keywords_text',
 		'type'       => 'text_medium',
+	) );
+	
+	// TEXT AREA FIELD
+	$cmb_keywords->add_field( array(
+		'name'       => __( 'Project Date', 'dehli-grolimund' ),
+		'id'         => $prefix . 'date',
+		'type'       => 'text_medium',
 	) );	
 	
 }
@@ -132,4 +139,13 @@ function dg_register_media_box() {
 		'type' => 'oembed',
 	) );
 	
+/*
+	// MOVIE FIELD (for shortcode)
+	$cmb_media_group->add_group_field( $group_field_id, array(
+		'name' => esc_html__( 'Movie', 'dehli-grolimund' ),
+		'desc' => 'Enter a short code',
+		'id'   => 'movie',
+		'type' => 'textarea',
+	) );	
+*/
 }
