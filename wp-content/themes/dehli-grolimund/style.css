@@ -1038,6 +1038,13 @@ object {
 }
 
 
+body:not(.index-active):not(.studio-info-expanded):not(.project-info-expanded) *:not(button) 
+{
+	cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjbQg61aAAAADUlEQVQYV2P4//8/IwAI/QL/+TZZdwAAAABJRU5ErkJggg=='),
+    url(images/blank.cur),
+    none !important;
+}
+
 
 /*--------------------------------------------------------------
 # UI
@@ -1088,27 +1095,59 @@ object {
 
 .itm-down{
 	bottom: 0px;
-	transform: rotate(180deg);
 }
 
 .itm-right{
 	right: 0px;
 }
 
-.itm-right:hover{
-	cursor: url(img/ui-arrow-right.svg) 25 25, auto;
+.container-cursor{
+	position: relative;
+	pointer-events: none;
+	width: 100%;
+	height: 100%;
 }
 
-.itm-left:hover{
-	cursor: url(img/ui-arrow-left.svg) 25 25, auto;
+.container-cursor svg{
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 50px;
+	height: 50px;
+	margin: 0;
+	pointer-events: none;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	-webkit-transform-origin: 50% 50%;
+	transform-origin: 50% 50%;
 }
 
-.itm-up:hover{
-	cursor: url(img/ui-arrow-up.svg) 25 25, auto;
+.arrow{
+	pointer-events: none !important;
+	fill: none;
+	stroke:	#000000;
+	stroke-width:2;
+	stroke-miterlimit:15.625;
 }
 
-.itm-down:hover{
-	cursor: url(img/ui-arrow-down.svg) 25 25, auto;
+.itm-right svg{
+	-webkit-transform: translate(-50%, -50%) rotate( -90deg );
+	transform: translate(-50%, -50%) rotate( -90deg );
+}
+
+.itm-left svg{
+	-webkit-transform: translate(-50%, -50%) rotate( 90deg );
+	transform: translate(-50%, -50%) rotate( 90deg );
+}
+
+.itm-up svg{
+	-webkit-transform: translate(-50%, -50%) rotate( -180deg );
+	transform: translate(-50%, -50%) rotate( -180deg );
+}
+
+[data-ui-options="white"] .arrow{
+	stroke:	#FFFFFF;
 }
 
 .ui-index{
@@ -1181,7 +1220,6 @@ object {
 	width: 50%;
 	height: 100%;
 	overflow-y: scroll;
-	
 	transform: translate( 100%, 0 );
 }
 
@@ -1209,19 +1247,6 @@ object {
 .index-active[data-ui-options="white"] .ui-project-title
 {
 	filter: invert( 0 );
-}
-
-[data-ui-options="white"] .itm-up:hover{
-	cursor: url(img/ui-arrow-up-white.svg) 25 25, auto;
-}
-[data-ui-options="white"] .itm-right:hover{
-	cursor: url(img/ui-arrow-right-white.svg) 25 25, auto;
-}
-[data-ui-options="white"] .itm-down:hover{
-	cursor: url(img/ui-arrow-down-white.svg) 25 25, auto;
-}
-[data-ui-options="white"] .itm-left:hover{
-	cursor: url(img/ui-arrow-left-white.svg) 25 25, auto;
 }
 
 .noscroll{
@@ -1252,7 +1277,7 @@ body{
 button{
 	border: none;
 	background: none;
-	cursor: pointer;
+	cursor: pointer !important;
 	padding: 0px;
 }
 

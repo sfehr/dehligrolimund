@@ -179,6 +179,7 @@ jQuery( document ).ready( function( $ ) {
 	// UI INTERACTION 
 
 	// Section/Slide Navigation Arrows
+	
 	$( document ).on( 'click', '.ui-navigation', function( e ) { 
 
 		e.preventDefault();
@@ -201,6 +202,24 @@ jQuery( document ).ready( function( $ ) {
 		}	
 
 	});
+	
+	// Display Arrow Cursor
+	$( document ).on( 'mousemove', '.ui-navigation', function( e ) { 
+		
+		$( this ).find( 'svg' ).css({
+			'display': 'block',
+			'top': e.clientY,
+			'left': e.clientX
+		});
+
+	});
+	// Hide Arrow Cursor			   
+	$( 'body' ).on( 'mouseleave', '.ui-navigation', function() { 
+		
+		$( this ).find( 'svg' ).css({
+			'display': 'none',
+		});		
+	});				   
 
 
 	// Display Project Info
