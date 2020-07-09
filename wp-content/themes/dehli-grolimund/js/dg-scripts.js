@@ -71,7 +71,7 @@ jQuery( document ).ready( function( $ ) {
 			normalScrollElements: '.ui-project-content, .ui-studio-content, #index',
 			controlArrows: false,
 			touchSensitivity: 75,
-			responsiveWidth: 650,
+			responsiveWidth: 850,
 			responsiveSlides: true,
 			scrollBar: false,
 /*			afterResponsive: function( isResponsive ){

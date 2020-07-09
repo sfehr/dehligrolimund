@@ -253,6 +253,7 @@ function dg_custom_header() {
 	echo '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />';
 	
 	// GMT
+	
 	echo "
 		<!-- Google Tag Manager -->
 		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -267,10 +268,11 @@ function dg_custom_header() {
 	echo '<link rel="stylesheet" href="https://use.typekit.net/wlv6frg.css">';
 	
 	// favicon
-	echo '
+/*	echo '
 		<link rel="icon" media="(prefers-color-scheme:light)" href="' . get_template_directory_uri() .  '/img/favicon-dark.png" type="image/png" />
 		<link rel="icon" media="(prefers-color-scheme:dark)" href="' . get_template_directory_uri() . '/img/favicon-light.png" type="image/png" />
 		';
+*/		
 	
 }
 
@@ -288,36 +290,40 @@ function dg_gutenberg_custom_colors() {
 	// add custom color palette
 	add_theme_support( 'editor-color-palette', array(
 		array(
-			'name'  => __( 'Dunkelblau', 'dehli-grolimund' ),
-			'slug'  => 'navy',
-			'color'	=> '#748f98',
+			'name'  => __( 'Pale Lemon Yellow', 'dehli-grolimund' ),
+			'slug'  => 'pale-lemon-yellow',
+			'color'	=> '#fceeb2',
 		),	
 		array(
-			'name'  => __( 'Coral', 'dehli-grolimund' ),
-			'slug'  => 'coral',
-			'color'	=> '#fabeab',
-		),	
-		array(
-			'name'  => __( 'Meiji Jingu', 'dehli-grolimund' ),
-			'slug'  => 'green',
-			'color'	=> '#b5dcb7',
+			'name'  => __( 'Hermosa Pink', 'dehli-grolimund' ),
+			'slug'  => 'hermosa-pink',
+			'color'	=> '#e6bdc3',
 		),
 		array(
-			'name'  => __( 'Corn Tea', 'dehli-grolimund' ),
-			'slug'  => 'beige',
-			'color'	=> '#f2d9b0',
+			'name'  => __( 'Coral Red', 'dehli-grolimund' ),
+			'slug'  => 'coral-red',
+			'color'	=> '#d98c7f',
 		),
 		array(
-			'name'  => __( 'Yellow', 'dehli-grolimund' ),
-			'slug'  => 'yellow',
-			'color'	=> '#ffe19d',
+			'name'  => __( 'Pale Kings Blue', 'dehli-grolimund' ),
+			'slug'  => 'pale-king-blue',
+			'color'	=> '#aeced7',
 		),
 		array(
-			'name'  => __( 'Kaki', 'dehli-grolimund' ),
-			'slug'  => 'kaki',
-			'color'	=> '#aaa491',
+			'name'  => __( 'Olympic Blue', 'dehli-grolimund' ),
+			'slug'  => 'olympic-blue',
+			'color'	=> '#5f769c',
 		),		
-
+		array(
+			'name'  => __( 'Cobalt Green', 'dehli-grolimund' ),
+			'slug'  => 'cobalt-green',
+			'color'	=> '#9ec7a2',
+		),		
+		array(
+			'name'  => __( 'Venice Green', 'dehli-grolimund' ),
+			'slug'  => 'venice-green',
+			'color'	=> '#7cbbb1',
+		),
 
 	) );	
 }
