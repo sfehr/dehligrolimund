@@ -1038,11 +1038,17 @@ object {
 }
 
 
-body:not(.index-active):not(.studio-info-expanded):not(.project-info-expanded) *:not(button) 
-{
+body{
 	cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjbQg61aAAAADUlEQVQYV2P4//8/IwAI/QL/+TZZdwAAAABJRU5ErkJggg=='),
     url('img/pixel.png'),
     none !important;
+}
+
+body.index-active,
+.studio-info-expanded .ui-studio-content,
+.project-info-expanded .ui-project-content
+{
+	cursor: default !important;
 }
 
 
@@ -1347,29 +1353,26 @@ h1
 }
 
 /* colors */
-.has-background.has-gray-background-color{
-	background: #cbc9c9;
+.has-background.has-pale-lemon-yellow-background-color{
+	background: #fceeb2;
 }
-.has-background.has-coral-background-color{
-	background: #fabeab;
+.has-background.has-hermosa-pink-background-color{
+	background: #e6bdc3;
 }
-.has-background.has-blue-background-color{
-	background: #7fbde8;
+.has-background.has-coral-red-background-color{
+	background: #d98c7f;
 }
-.has-background.has-green-background-color{
-	background: #b5dcb7;
+.has-background.has-pale-king-blue-background-color{
+	background: #aeced7;
 }
-.has-background.has-beige-background-color{
-	background: #f2d9b0;
+.has-background.has-olympic-blue-background-color{
+	background: #5f769c;
 }
-.has-background.has-navy-background-color{
-	background: #748f98;
+.has-background.has-cobalt-green-background-color{
+	background: #9ec7a2;
 }
-.has-background.has-yellow-background-color{
-	background: #ffe19d;
-}
-.has-background.has-kaki-background-color{
-	background: #aaa491;
+.has-background.has-venice-green-background-color{
+	background: #7cbbb1;
 }
 
 p.has-background{
@@ -1486,7 +1489,8 @@ body,
 	left: 0;
 	margin: auto;
 	
-	-webkit-transform: translate3d(0,0,0);
+	-webkit-transform: translate3d( 0, 0, 0 ) !important;
+	transform: translate3d( 0, 0, 0 ) !important;
 }
 
 .container-img{
@@ -1504,6 +1508,9 @@ body,
 .entry-media > img{
 /*	width: 100%; */
 	width: auto;
+	
+	-webkit-transform: translate3d( 0, 0, 0 ) !important;
+	transform: translate3d( 0, 0, 0 ) !important;	
 }
 
 .itm-s > img,
