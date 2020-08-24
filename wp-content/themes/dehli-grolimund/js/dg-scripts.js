@@ -20,7 +20,21 @@ jQuery( document ).ready( function( $ ) {
 
 	// VARIABLES
 	var projects = {};
-	var project_titles = [];	
+	var project_titles = [];
+	const is_coarse = matchMedia( '(pointer:coarse)' ).matches;
+	const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 );
+	const vh = Math.max( document.documentElement.clientHeight || 0, window.innerHeight || 0 );
+//	let vh_css = vh * 0.01; // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+	let viewport = ( vh > vw ) ? ( vh * 0.01 ) : ( vw * 0.01 ); // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+	
+	// DIMENSIONS
+	
+	document.documentElement.style.setProperty( '--vh', `${ viewport }px` ); // Then we set the value in the --vh custom property to the root of the document
+
+	window.addEventListener( 'orientationchange', () => {
+		let viewport = ( vh > vw ) ? ( vh * 0.01 ) : ( vw * 0.01 ); 
+		document.documentElement.style.setProperty( '--vh', `${ viewport }px` );
+	});	
 
 	
 	// CONTENT OBJECT CONSTRUCTOR
@@ -57,8 +71,16 @@ jQuery( document ).ready( function( $ ) {
 		
 	});
 	
-	initialize_fullpage();	
-
+	
+	if( ( vw < 850 ) && is_coarse ){
+		// MOBILE, TOUCH
+		sf_viwport_handler();
+	 }
+	else{
+		// DESKTOP, POINTER
+		initialize_fullpage();
+	}
+	
 
 	// FULLPAGE.js INITIALIZE
 	function initialize_fullpage(){
@@ -71,11 +93,10 @@ jQuery( document ).ready( function( $ ) {
 			normalScrollElements: '.ui-project-content, .ui-studio-content, #index',
 			controlArrows: false,
 			touchSensitivity: 75,
-			responsiveWidth: 850,
-			responsiveSlides: true,
+//			responsiveWidth: 850,
+			responsiveSlides: false,
 			scrollBar: false,
 /*			afterResponsive: function( isResponsive ){
-
 			},			
 */
 
@@ -246,8 +267,10 @@ jQuery( document ).ready( function( $ ) {
 		// add index-active class to main container
 		$( 'body' ).addClass( 'index-active' );
 		
-		// freeze scrolling for #fullpage
-		fullpage_api.setAllowScrolling( false );
+		if( ( vw > 850 ) && !is_coarse ){
+			// freeze scrolling for #fullpage
+			fullpage_api.setAllowScrolling( false );
+		}
 
 	});
 
@@ -257,34 +280,43 @@ jQuery( document ).ready( function( $ ) {
 		// remove index-active class from main container
 		$( 'body' ).removeClass( 'index-active' );
 
-		// resume scrolling
-		fullpage_api.setAllowScrolling( true );
-
 		if( $( this ).hasClass( 'ui-slide-link' ) ){
-
 			// get the section position
 			var new_section = $( this ).parents( '.section' ).attr( 'data-slug' );
+			var section_index = $( this ).parents( '.section' ).index();
 			// get the slide position
 			var new_slide = $( this ).parents( '.slide' ).index() - 1;
 			
-			// check if responsive mode is active
-			if( $( 'body' ).hasClass( 'fp-responsive' ) ){
-				
-				// when responsiveslides state is on slide index 0 and 1 is not valid
-				new_slide++;
-				new_slide = ( new_slide > 1 ) ? new_slide : '' ;
-				
-				// move to position (in respoinsiveslides active state there is no / between section and slide in the url )
-				fullpage_api.silentMoveTo( new_section + new_slide );
+		
+			// DESKTOP
+			if( ( vw > 850 ) && !is_coarse ){
+		
+				// resume scrolling
+				fullpage_api.setAllowScrolling( true );
+				// check if responsive mode is active
+				if( $( 'body' ).hasClass( 'fp-responsive' ) ){
+					// when responsiveslides state is on slide index 0 and 1 is not valid
+					new_slide++;
+					new_slide = ( new_slide > 1 ) ? new_slide : '' ;
+					// move to position (in respoinsiveslides active state there is no / between section and slide in the url )
+					fullpage_api.silentMoveTo( new_section + new_slide );
+				}
+				else{
+					// move to position
+					fullpage_api.silentMoveTo( new_section, new_slide );
+				}			
 			}
+			// MOBILE
 			else{
 				
-				// move to position
-				fullpage_api.silentMoveTo( new_section, new_slide );
+				var destination = jQuery( '#fullpage .section' ).eq( section_index ).find( '.slide' ).eq( new_slide );
+				destination[ 0 ].scrollIntoView({
+					behavior: "smooth", // or "auto" or "instant"
+					block: "start" // or "end"
+				});				
+				
 			}
-
-		}
-
+		}	
 	});
 
 	// PRIVACY POLICY
@@ -314,6 +346,55 @@ jQuery( document ).ready( function( $ ) {
 
 		return str;
 	}
+	
+	
+	// VIEWPORT HANDLER
+	function sf_viwport_handler(){
+		
+//		const elements = document.querySelectorAll( '#fullpage .section' );
+		const elements = document.querySelectorAll( '#fullpage .slide' );
 
+		function handleIntersection( entries ) {
+
+		  entries.map( ( entry ) => {
+			  
+			  if ( entry.isIntersecting ){
+				  
+//				  section_index = jQuery( entry.target ).index();
+				  section_index = jQuery( entry.target.parentElement ).index();
+				  // title
+				  getContent( projects[ section_index ].title, '.ui-project-title' ); // get content (item, container)
+				  // content
+				  getContent( projects[ section_index ].content, '.ui-project-content .container-content' );					
+				  // get color
+				  getColor( projects[ section_index ].color, 'ui-project-content' ); //  ( color, container_class ) no dot notation
+				  // get UI options ( item, container, selector)
+				  getUiOptions( entry.target, 'body' );
+
+			}
+		  });
+		}
+		
+		let options = {
+//		  root: document.querySelector( '#fullpage' ),
+		  rootMargin: '25% 0% 25% 0%',
+//		  threshold: [0, 0.25, 0.5, 0.75, 1]
+			threshold: 0.5
+		}		
+
+		const observer = new IntersectionObserver( handleIntersection, options );
+
+		elements.forEach( element => observer.observe( element ) );
+		
+	}
+	
+	
+	// RESIZE EVENTS
+	jQuery( window ).on( 'orientationchange', function(){
+		// resets the horizontal scroll position to avoid strange croppings when orientation is changed back to portrait
+		jQuery( '.itm-book' ).each( function(){
+			jQuery( this ).scrollLeft( 0 );
+		});
+	});
 
 });	

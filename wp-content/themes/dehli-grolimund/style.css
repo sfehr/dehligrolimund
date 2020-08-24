@@ -54,6 +54,7 @@ Nicolas Gallagher and Jonathan Neal https://necolas.github.io/normalize.css/
 # INDEX ACTIVE
 # MEDIA QUERIES
 # CAPABILITY QUERIES
+# HACKY BROWSER QUERY
 --------------------------------------------------------------*/
 
 
@@ -1282,6 +1283,10 @@ body{
 	-webkit-font-smoothing: antialiased;	
 }
 
+picture{
+	line-height: 0;
+}
+
 button{
 	border: none;
 	background: none;
@@ -1787,6 +1792,12 @@ body,
 		overflow-x: hidden;
 	}
 	
+	#fullpage .slide{
+		height: 100vh; /* fallback */
+		height: calc(var(--vh, 1vh) * 100);
+		min-height: 320px;
+	}	
+	
 }
 
 @media screen and (max-width: 650px) {
@@ -1830,11 +1841,6 @@ body,
 		line-height: 0;
 	}
 	
-	.entry-media.itm-full img{
-		width: auto;
-		height: 100%;
-	}
-	
 	.itm-mov.itm-s iframe,
 	.itm-mov.itm-m iframe,
 	.itm-mov.itm-l iframe
@@ -1847,20 +1853,15 @@ body,
 		position: relative;
 		overflow-x: scroll;
 		overflow-y: hidden;
-		justify-content: left;
 		height: 100%;
-		
-		padding-left: unset;
 	}
 
 	.container-img{
 		max-width: unset;
-		transform: scale( 0.9 );
+		transform: translateX( 7.5px );
 	}
     
     .container-img + .container-img{
-        transform: scale( 0.9 ) translateX( -11% ); 
-		-webkit-transform: scale( 0.9 ) translateX( -11% );
         padding-right: 15px;
     }
 	
@@ -1891,7 +1892,7 @@ body,
 	.index-active #index .section, 
 	.index-active #index .entry-info 
 	{	
-		grid-template-columns: 1fr;
+		grid-template-columns: repeat( auto-fill, minmax( 200px, 1fr) );
 	}
 	
 	.index-active #index .entry-info .entry-title{
@@ -1920,15 +1921,40 @@ body,
 }
 
 
-@media screen and (max-width: 650px) and (orientation: portrait) {
+@media screen and (max-width: 850px) and (orientation: portrait) {
+	
+	.entry-media.itm-full img{
+		width: auto;
+		height: 100%;
+	}
+	
+	.itm-book{
+		justify-content: left;		
+		padding-left: unset;
+	}
+	
+	.container-img{
+		transform: scale( 0.9 );
+	}
+    
+    .container-img + .container-img{
+        transform: scale( 0.9 ) translateX( -11% ); 
+		-webkit-transform: scale( 0.9 ) translateX( -11% );
+    }	
+	
 	
 	.itm-s .container-img img,
 	.itm-m .container-img img,
 	.itm-l .container-img img
 	{
-		max-height: 90%;
-	}	
+/*		max-height: 90%; */
+		max-height: 90vh;
+		max-width: 100vw;
+	}
 	
+	.ui-navigation{
+		display: none;
+	}
 }
 
 
@@ -1947,3 +1973,33 @@ body,
 @media (pointer: fine) {
 
 }
+
+/*--------------------------------------------------------------
+# HACKY BROWSER QUERY
+--------------------------------------------------------------*/
+
+@media not all and (min-resolution:.001dpcm) { @supports (-webkit-appearance:none) and (display:flow-root) { 
+
+
+	body:not(.index-active):not(.studio-info-expanded .ui-studio-content):not(.project-info-expanded .ui-project-content) *:not(button)
+	{
+		cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjbQg61aAAAADUlEQVQYV2P4//8/IwAI/QL/+TZZdwAAAABJRU5ErkJggg=='),
+		url('img/pixel.png'),
+		none;
+	}
+	
+	.studio-info-expanded .ui-studio-content,
+	.studio-info-expanded .ui-studio-content *:not(button),
+	.project-info-expanded .ui-project-content,
+	.project-info-expanded .ui-project-content *:not(button)
+	{
+		cursor: default !important;
+	}
+	
+	.studio-info-expanded .ui-studio-content a:hover,
+	.project-info-expanded .ui-project-content a:hover
+	{
+		cursor: pointer !important;
+	}
+	
+} }

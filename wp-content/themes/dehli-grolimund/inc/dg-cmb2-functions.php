@@ -138,14 +138,4 @@ function dg_register_media_box() {
 		'id'   => 'movie',
 		'type' => 'oembed',
 	) );
-	
-/*
-	// MOVIE FIELD (for shortcode)
-	$cmb_media_group->add_group_field( $group_field_id, array(
-		'name' => esc_html__( 'Movie', 'dehli-grolimund' ),
-		'desc' => 'Enter a short code',
-		'id'   => 'movie',
-		'type' => 'textarea',
-	) );	
-*/
 }

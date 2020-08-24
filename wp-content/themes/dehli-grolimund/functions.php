@@ -154,7 +154,7 @@ function dehli_grolimund_scripts() {
 	
 	wp_enqueue_script( 'fullpage-js',  get_template_directory_uri() . '/js/fullpage.extensions.min.js', array(), '', true );
 	
-	wp_enqueue_script( 'vimeo-scripts-api', 'https://player.vimeo.com/api/player.js', array(), '', true );
+//	wp_enqueue_script( 'vimeo-scripts-api', 'https://player.vimeo.com/api/player.js', array(), '', true );
 	
 	wp_enqueue_script( 'dg-scripts-js', get_template_directory_uri() . '/js/dg-scripts.js', array( 'jquery' ), '', true );
 	
@@ -256,11 +256,13 @@ function dg_custom_header() {
 	
 	echo "
 		<!-- Google Tag Manager -->
-		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-		j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-		'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-		})(window,document,'script','dataLayer','GTM-M794Z5N');</script>
+		<script>
+			(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+			})(window,document,'script','dataLayer','GTM-M794Z5N');
+		</script>
 		<!-- End Google Tag Manager -->
 	";
 	
